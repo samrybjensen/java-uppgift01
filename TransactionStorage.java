@@ -4,89 +4,135 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 class TransactionStorage {
-  private final Path filePath;
+  private final File file;
+
+  private static final String HEADER = "date\tamount\tnote\ttype\tcategory";
 
   TransactionStorage(String fileName) {
-    this.filePath = Paths.get(fileName);
+    this.file = new File(fileName);
   }
 
-  public List<Expense> readAll() throws IOException {
-    List<Expense> items = new ArrayList<>();
-    if (!Files.exists(filePath)) {
+  public List<Transaction> readAll() throws IOException {
+    List<Transaction> items = new ArrayList<>();
+
+    if (!file.exists()) {
       return items;
     }
-    try (BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
+
+    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
       String line;
-      br.mark(1024);
       String first = br.readLine();
+
       if (first != null) {
-        if (!isHeader(first)) {
-          Expense e = parseLine(first);
-          if (e != null)
-            items.add(e);
+        if (!isHeaderValid(first)) {
+          Transaction t = parseLine(first);
+
+          if (t != null) {
+            items.add(t);
+          }
         }
       }
+
       if (first != null) {
         while ((line = br.readLine()) != null) {
-          Expense e = parseLine(line);
-          if (e != null)
-            items.add(e);
+          Transaction t = parseLine(line);
+          if (t != null)
+            items.add(t);
         }
       }
     }
+
     return items;
   }
 
-  public void append(Expense expense) throws IOException {
-    File f = filePath.toFile();
+  public void append(Transaction t) throws IOException {
+    File f = this.file;
     boolean exists = f.exists();
+
+    if (exists && f.length() > 0) {
+      try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+        String first = br.readLine();
+        if (first != null && !isHeaderValid(first)) {
+          throw new IOException("Cannot append to file. Header is not in a valid format.");
+        }
+      }
+    }
+
     try (BufferedWriter bw = new BufferedWriter(new FileWriter(f, true))) {
       if (!exists) {
-        bw.write("date\tamount\tnote\tcategory\n");
+        bw.write(HEADER + "\n");
+      } else if (f.length() == 0) {
+        bw.write(HEADER + "\n");
       }
-      bw.write(format(expense));
+
+      bw.write(format(t));
       bw.newLine();
     }
   }
 
-  private boolean isHeader(String line) {
-    return line != null && line.startsWith("date\tamount\tnote\tcategory");
+  private boolean isHeaderValid(String line) {
+    return line != null && line.startsWith(HEADER);
   }
 
-  private String format(Expense e) {
+  private String format(Transaction t) {
+    String type;
+    String category = "";
+
+    if (t instanceof Expense) {
+      type = "expense";
+      category = ((Expense) t).getCategory();
+    } else if (t instanceof Income) {
+      type = "income";
+    } else {
+      type = "unknown";
+    }
+
     return String.join("\t",
-        e.getDate().toString(),
-        Float.toString(e.getAmount()),
-        escape(e.getNote()),
-        escape(e.getCategory()));
+        t.getDate().toString(),
+        Float.toString(t.getAmount()),
+        escape(t.getNote()),
+        type,
+        escape(category));
   }
 
   private String escape(String s) {
-    if (s == null)
+    if (s == null) {
       return "";
+    }
+
     return s.replace("\t", " ").replace("\n", " ").replace("\r", " ");
   }
 
-  private Expense parseLine(String line) {
-    if (line == null || line.isEmpty())
+  private Transaction parseLine(String line) {
+    if (line == null || line.isEmpty()) {
       return null;
+    }
+
     String[] parts = line.split("\t", -1);
-    if (parts.length < 4)
-      return null;
+
     try {
+      if (parts.length < 5) {
+        return null;
+      }
+
       LocalDate date = LocalDate.parse(parts[0]);
       float amount = Float.parseFloat(parts[1]);
       String note = parts[2];
-      String category = parts[3];
-      return new Expense(date, amount, note, category);
+      String type = parts[3] == null ? "" : parts[3].toLowerCase();
+      String category = parts[4];
+
+      if ("income".equals(type)) {
+        return new Income(date, amount, note);
+      } else if ("expense".equals(type) || type.isEmpty()) {
+        return new Expense(date, amount, note, category);
+      } else {
+        return null;
+      }
     } catch (Exception e) {
       return null;
     }
