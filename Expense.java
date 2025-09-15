@@ -1,7 +1,14 @@
 import java.time.LocalDate;
 
 class Expense extends Transaction {
-  protected Expense(LocalDate date, float amount, String note) {
+  private String category;
+
+  protected Expense(LocalDate date, float amount, String note, String category) {
     super(date, amount, note);
+    this.category = category;
+  }
+
+  public String getCategory() {
+    return category;
   }
 }
