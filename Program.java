@@ -7,45 +7,38 @@ import java.util.Scanner;
 
 public class Program {
   private static final String STORAGE_FILE = "transactions.tsv";
+  private final Scanner scanner;
+
+  public Program() {
+    this.scanner = new Scanner(System.in);
+  }
 
   public void Run() {
-    Scanner scanner = new Scanner(System.in);
+    System.out.println("Choose a mode: 'add' or 'filter'");
+    System.out.print("Enter choice (add/filter or 1/2): ");
+    String choice = scanner.nextLine().trim().toLowerCase();
 
-    boolean keepRunning = true;
-    while (keepRunning) {
-      System.out.println("Choose a mode: 'add' or 'filter'");
-      System.out.print("Enter choice (add/filter or 1/2): ");
-      String choice = scanner.nextLine().trim().toLowerCase();
-
-      if ("1".equals(choice)) {
-        choice = "add";
-      }
-      if ("2".equals(choice)) {
-        choice = "filter";
-      }
-
-      boolean performedAction = false;
-      switch (choice) {
-        case "add":
-          interactiveAdd(scanner);
-          performedAction = true;
-          break;
-        case "filter":
-          interactiveFilter(scanner);
-          performedAction = true;
-          break;
-        default:
-          System.out.println("Unknown choice. Please type 'add' or 'filter'.");
-      }
-
-      if (performedAction) {
-        keepRunning = promptAnother(scanner);
-      } else {
-        keepRunning = true;
-      }
+    if ("1".equals(choice)) {
+      choice = "add";
+    }
+    if ("2".equals(choice)) {
+      choice = "filter";
     }
 
-    scanner.close();
+    switch (choice) {
+      case "add":
+        interactiveAdd(scanner);
+        break;
+      case "filter":
+        interactiveFilter(scanner);
+        break;
+      default:
+        System.out.println("Unknown choice. Please type 'add' or 'filter'.");
+    }
+  }
+
+  public boolean PromptAgain() {
+    return promptAnother(scanner);
   }
 
   private boolean promptAnother(Scanner scanner) {
