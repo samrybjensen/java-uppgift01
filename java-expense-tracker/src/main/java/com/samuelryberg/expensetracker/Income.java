@@ -1,3 +1,5 @@
+package com.samuelryberg.expensetracker;
+
 import java.time.LocalDate;
 
 class Income extends Transaction {
@@ -5,4 +7,3 @@ class Income extends Transaction {
     super(date, amount, note);
   }
 }
-

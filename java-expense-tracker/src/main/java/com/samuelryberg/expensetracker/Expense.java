@@ -1,3 +1,5 @@
+package com.samuelryberg.expensetracker;
+
 import java.time.LocalDate;
 
 class Expense extends Transaction {

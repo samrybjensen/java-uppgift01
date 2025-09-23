@@ -1,3 +1,4 @@
+package com.samuelryberg.expensetracker;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
