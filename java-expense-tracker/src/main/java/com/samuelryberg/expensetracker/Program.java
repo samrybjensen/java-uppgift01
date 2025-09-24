@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Program {
-  private static final String STORAGE_FILE = "transactions.tsv";
+  private static final String STORAGE_FILE = "transactions.csv";
   private final Scanner scanner;
 
   public Program() {
@@ -139,10 +139,12 @@ public class Program {
     try {
       store.append(tx);
 
+      String separator = ";";
       if (tx instanceof Expense) {
-        System.out.println("Saved: " + date + "\t" + amount + "\t" + note + "\texpense\t" + category);
+        System.out.println(
+            "Saved: " + date + separator + amount + separator + note + separator + "expense" + separator + category);
       } else {
-        System.out.println("Saved: " + date + "\t" + amount + "\t" + note + "\tincome");
+        System.out.println("Saved: " + date + separator + amount + separator + note + separator + "income");
       }
     } catch (Exception e) {
       System.out.println("Failed to save: " + e.getMessage());
@@ -229,7 +231,7 @@ public class Program {
       return;
     }
 
-    System.out.println("date\tamount\tnote\ttype\tcategory");
+    System.out.println("Date Amount Note Type Category");
 
     float incomeSum = 0f;
     float expenseSum = 0f;
@@ -237,7 +239,8 @@ public class Program {
     for (Transaction t : filtered) {
       String type = (t instanceof Expense) ? "expense" : "income";
       String cat = (t instanceof Expense) ? ((Expense) t).getCategory() : "";
-      System.out.println(t.getDate() + "\t" + t.getAmount() + "\t" + t.getNote() + "\t" + type + "\t" + cat);
+      String formatted = t.getDate() + " " + t.getAmount() + " " + t.getNote() + " " + type + " " + cat;
+      System.out.println(formatted);
 
       if (t instanceof Expense) {
         expenseSum += t.getAmount();

@@ -1,0 +1,17 @@
+date;amount;note;type;category
+2025-09-24;30000.0;Salary;income;
+2025-09-24;200.0;Supermarket;expense;Food
+2025-09-24;150.0;Netflix;expense;Entertainment
+2025-09-25;50.0;Coffee Shop;expense;Food
+2025-09-25;1200.0;Rent;expense;Housing
+2025-09-25;80.0;Gas Station;expense;Transportation
+2025-09-26;600.0;Freelance Project;income;
+2025-09-26;45.0;Gym Membership;expense;Health
+2025-09-26;90.0;Electricity Bill;expense;Utilities
+2025-09-27;250.0;Restaurant;expense;Food
+2025-09-27;30.0;Bus Pass;expense;Transportation
+2025-09-28;400.0;Gift from Friend;income;
+2025-09-28;300.0;Clothing Store;expense;Shopping
+2025-09-29;75.0;Cinema;expense;Entertainment
+2025-09-29;60.0;Phone Bill;expense;Utilities
+

@@ -13,7 +13,7 @@ import java.util.List;
 class TransactionStorage {
   private final File file;
 
-  private static final String HEADER = "date\tamount\tnote\ttype\tcategory";
+  private static final String HEADER = "Date;Amount;Note;Type;Category";
 
   TransactionStorage(String fileName) {
     this.file = new File(fileName);
@@ -94,7 +94,7 @@ class TransactionStorage {
       type = "unknown";
     }
 
-    return String.join("\t",
+    return String.join(";",
         t.getDate().toString(),
         Float.toString(t.getAmount()),
         escape(t.getNote()),
@@ -107,7 +107,10 @@ class TransactionStorage {
       return "";
     }
 
-    return s.replace("\t", " ").replace("\n", " ").replace("\r", " ");
+    return s.replace(";", " ")
+        .replace("\t", " ")
+        .replace("\n", " ")
+        .replace("\r", " ");
   }
 
   private Transaction parseLine(String line) {
@@ -115,7 +118,7 @@ class TransactionStorage {
       return null;
     }
 
-    String[] parts = line.split("\t", -1);
+    String[] parts = line.split(";", -1);
 
     try {
       if (parts.length < 5) {
