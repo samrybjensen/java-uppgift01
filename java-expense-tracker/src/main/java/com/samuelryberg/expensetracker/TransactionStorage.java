@@ -12,6 +12,7 @@ import java.util.List;
 
 class TransactionStorage {
   private final File file;
+  private boolean headerChecked;
 
   private static final String HEADER = "Date;Amount;Note;Type;Category";
 
@@ -28,24 +29,24 @@ class TransactionStorage {
 
     try (BufferedReader br = new BufferedReader(new FileReader(file))) {
       String line;
-      String first = br.readLine();
+      int lineNumber = 0;
 
-      if (first != null) {
-        if (!isHeaderValid(first)) {
-          Transaction t = parseLine(first);
+      while ((line = br.readLine()) != null) {
+        lineNumber++;
 
-          if (t != null) {
-            items.add(t);
+        if (lineNumber == 1) {
+          if (!isHeaderValid(line)) {
+            throw new IOException("Invalid header in transaction file: " + line);
           }
+          headerChecked = true;
+          continue;
         }
-      }
 
-      if (first != null) {
-        while ((line = br.readLine()) != null) {
-          Transaction t = parseLine(line);
-          if (t != null)
-            items.add(t);
+        if (line.trim().isEmpty()) {
+          continue;
         }
+
+        items.add(parseLine(line, lineNumber));
       }
     }
 
@@ -53,25 +54,9 @@ class TransactionStorage {
   }
 
   public void append(Transaction t) throws IOException {
-    File f = this.file;
-    boolean exists = f.exists();
+    ensureHeader();
 
-    if (exists && f.length() > 0) {
-      try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-        String first = br.readLine();
-        if (first != null && !isHeaderValid(first)) {
-          throw new IOException("Cannot append to file. Header is not in a valid format.");
-        }
-      }
-    }
-
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter(f, true))) {
-      if (!exists) {
-        bw.write(HEADER + "\n");
-      } else if (f.length() == 0) {
-        bw.write(HEADER + "\n");
-      }
-
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
       bw.write(format(t));
       bw.newLine();
     }
@@ -81,25 +66,46 @@ class TransactionStorage {
     return line != null && line.startsWith(HEADER);
   }
 
-  private String format(Transaction t) {
-    String type;
-    String category = "";
-
-    if (t instanceof Expense) {
-      type = "expense";
-      category = ((Expense) t).getCategory();
-    } else if (t instanceof Income) {
-      type = "income";
-    } else {
-      type = "unknown";
+  private synchronized void ensureHeader() throws IOException {
+    if (headerChecked) {
+      return;
     }
 
+    if (!file.exists()) {
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+        bw.write(HEADER);
+        bw.newLine();
+      }
+      headerChecked = true;
+      return;
+    }
+
+    if (file.length() == 0) {
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
+        bw.write(HEADER);
+        bw.newLine();
+      }
+      headerChecked = true;
+      return;
+    }
+
+    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+      String first = br.readLine();
+      if (!isHeaderValid(first)) {
+        throw new IOException("Cannot append to file. Header is not in a valid format.");
+      }
+    }
+
+    headerChecked = true;
+  }
+
+  private String format(Transaction t) {
     return String.join(";",
         t.getDate().toString(),
         Float.toString(t.getAmount()),
         escape(t.getNote()),
-        type,
-        escape(category));
+        t.getType(),
+        escape(t.getCategory()));
   }
 
   private String escape(String s) {
@@ -113,18 +119,14 @@ class TransactionStorage {
         .replace("\r", " ");
   }
 
-  private Transaction parseLine(String line) {
-    if (line == null || line.isEmpty()) {
-      return null;
-    }
-
+  private Transaction parseLine(String line, int lineNumber) throws IOException {
     String[] parts = line.split(";", -1);
 
-    try {
-      if (parts.length < 5) {
-        return null;
-      }
+    if (parts.length < 5) {
+      throw new IOException("Line " + lineNumber + " has too few columns: " + line);
+    }
 
+    try {
       LocalDate date = LocalDate.parse(parts[0]);
       float amount = Float.parseFloat(parts[1]);
       String note = parts[2];
@@ -135,11 +137,11 @@ class TransactionStorage {
         return new Income(date, amount, note);
       } else if ("expense".equals(type) || type.isEmpty()) {
         return new Expense(date, amount, note, category);
-      } else {
-        return null;
       }
-    } catch (Exception e) {
-      return null;
+
+      throw new IOException("Unknown transaction type '" + parts[3] + "' on line " + lineNumber);
+    } catch (RuntimeException e) {
+      throw new IOException("Failed to parse line " + lineNumber + ": " + line, e);
     }
   }
 }

@@ -1,17 +1,51 @@
-date;amount;note;type;category
-2025-09-24;30000.0;Salary;income;
-2025-09-24;200.0;Supermarket;expense;Food
-2025-09-24;150.0;Netflix;expense;Entertainment
-2025-09-25;50.0;Coffee Shop;expense;Food
-2025-09-25;1200.0;Rent;expense;Housing
-2025-09-25;80.0;Gas Station;expense;Transportation
-2025-09-26;600.0;Freelance Project;income;
-2025-09-26;45.0;Gym Membership;expense;Health
-2025-09-26;90.0;Electricity Bill;expense;Utilities
-2025-09-27;250.0;Restaurant;expense;Food
-2025-09-27;30.0;Bus Pass;expense;Transportation
-2025-09-28;400.0;Gift from Friend;income;
-2025-09-28;300.0;Clothing Store;expense;Shopping
-2025-09-29;75.0;Cinema;expense;Entertainment
-2025-09-29;60.0;Phone Bill;expense;Utilities
-
+Date;Amount;Note;Type;Category
+2025-09-30;50000.0;Salary;income;
+2025-10-01;5000.0;Rent;expense;House
+2025-10-02;350.5;Groceries;expense;Food
+2025-10-02;120.0;Electricity Bill;expense;Utilities
+2025-10-03;60.0;Internet Bill;expense;Utilities
+2025-10-03;250.0;Dining Out;expense;Food
+2025-10-04;80.0;Gas Refill;expense;Transport
+2025-10-04;150.0;Cinema;expense;Entertainment
+2025-10-05;200.0;Freelance Payment;income;
+2025-10-05;300.0;Clothes Shopping;expense;Shopping
+2025-10-06;45.0;Coffee Shop;expense;Food
+2025-10-06;220.0;Pharmacy;expense;Health
+2025-10-07;100.0;Gym Membership;expense;Health
+2025-10-07;30.0;Bus Pass;expense;Transport
+2025-10-08;80.0;Books;expense;Education
+2025-10-08;75.0;Mobile Plan;expense;Utilities
+2025-10-09;180.0;Weekend Trip;expense;Travel
+2025-10-09;50.0;Groceries;expense;Food
+2025-10-10;60.0;Streaming Service;expense;Entertainment
+2025-10-10;200.0;Concert Ticket;expense;Entertainment
+2025-10-11;1000.0;Stock Dividend;income;
+2025-10-11;500.0;Furniture Purchase;expense;House
+2025-10-12;120.0;Dinner with Friends;expense;Food
+2025-10-12;90.0;Taxi;expense;Transport
+2025-10-13;350.0;Online Course;expense;Education
+2025-10-13;30.0;Snacks;expense;Food
+2025-10-14;80.0;Car Wash;expense;Transport
+2025-10-14;200.0;Charity Donation;expense;Other
+2025-10-15;50000.0;Salary;income;
+2025-10-15;6000.0;Mortgage Payment;expense;House
+2025-10-16;45.0;Lunch;expense;Food
+2025-10-16;200.0;Doctor Appointment;expense;Health
+2025-10-17;150.0;New Shoes;expense;Shopping
+2025-10-17;250.0;Groceries;expense;Food
+2025-10-18;300.0;Weekend Hotel;expense;Travel
+2025-10-18;50.0;Souvenirs;expense;Shopping
+2025-10-19;100.0;Bike Repair;expense;Transport
+2025-10-19;120.0;Pizza Delivery;expense;Food
+2025-10-20;600.0;Freelance Payment;income;
+2025-10-20;350.0;New Headphones;expense;Shopping
+2025-10-21;75.0;Electricity Bill;expense;Utilities
+2025-10-21;40.0;Coffee Shop;expense;Food
+2025-10-22;90.0;Pharmacy;expense;Health
+2025-10-22;180.0;Dinner Date;expense;Food
+2025-10-23;60.0;Streaming Service;expense;Entertainment
+2025-10-23;250.0;Groceries;expense;Food
+2025-10-24;100.0;Taxi;expense;Transport
+2025-10-24;120.0;Birthday Gift;expense;Shopping
+2025-10-25;1200.0;Stock Sale;income;
+2025-10-25;300.0;Weekend Trip;expense;Travel

@@ -14,7 +14,7 @@ public class Program {
     this.scanner = new Scanner(System.in);
   }
 
-  public void Run() {
+  public void run() {
     System.out.println("Choose a mode: 'add' or 'filter'");
     System.out.print("Enter choice (add/filter or 1/2): ");
     String choice = scanner.nextLine().trim().toLowerCase();
@@ -28,21 +28,17 @@ public class Program {
 
     switch (choice) {
       case "add":
-        interactiveAdd(scanner);
+        interactiveAdd();
         break;
       case "filter":
-        interactiveFilter(scanner);
+        interactiveFilter();
         break;
       default:
         System.out.println("Unknown choice. Please type 'add' or 'filter'.");
     }
   }
 
-  public boolean PromptAgain() {
-    return promptAnother(scanner);
-  }
-
-  private boolean promptAnother(Scanner scanner) {
+  public boolean promptAgain() {
     System.out.print("Perform another request? (Y/n): ");
 
     String answer = scanner.nextLine().trim();
@@ -54,7 +50,7 @@ public class Program {
     return c == 'y';
   }
 
-  private void interactiveAdd(Scanner scanner) {
+  private void interactiveAdd() {
     System.out.println("-- Add Transaction --");
 
     String type = null;
@@ -139,19 +135,13 @@ public class Program {
     try {
       store.append(tx);
 
-      String separator = ";";
-      if (tx instanceof Expense) {
-        System.out.println(
-            "Saved: " + date + separator + amount + separator + note + separator + "expense" + separator + category);
-      } else {
-        System.out.println("Saved: " + date + separator + amount + separator + note + separator + "income");
-      }
+      System.out.println("Saved: " + formatTransaction(tx));
     } catch (Exception e) {
       System.out.println("Failed to save: " + e.getMessage());
     }
   }
 
-  private void interactiveFilter(Scanner scanner) {
+  private void interactiveFilter() {
     System.out.println("-- Filter Transactions --");
 
     System.out.print("From date YYYY-MM-DD (blank = no min): ");
@@ -210,11 +200,8 @@ public class Program {
       }
 
       if (category != null) {
-        if (t instanceof Expense) {
-          if (!category.equalsIgnoreCase(((Expense) t).getCategory())) {
-            continue;
-          }
-        } else {
+        String transactionCategory = t.getCategory();
+        if (transactionCategory.isEmpty() || !category.equalsIgnoreCase(transactionCategory)) {
           continue;
         }
       }
@@ -237,12 +224,10 @@ public class Program {
     float expenseSum = 0f;
 
     for (Transaction t : filtered) {
-      String type = (t instanceof Expense) ? "expense" : "income";
-      String cat = (t instanceof Expense) ? ((Expense) t).getCategory() : "";
-      String formatted = t.getDate() + " " + t.getAmount() + " " + t.getNote() + " " + type + " " + cat;
+      String formatted = formatTransaction(t);
       System.out.println(formatted);
 
-      if (t instanceof Expense) {
+      if (t.isExpense()) {
         expenseSum += t.getAmount();
       } else {
         incomeSum += t.getAmount();
@@ -254,5 +239,25 @@ public class Program {
     System.out.println("-- income total: " + incomeSum);
     System.out.println("-- expense total: " + expenseSum);
     System.out.println("-- net total: " + net);
+  }
+
+  private static String formatTransaction(Transaction t) {
+    return String.join(";",
+        t.getDate().toString(),
+        Float.toString(t.getAmount()),
+        escapeForDisplay(t.getNote()),
+        t.getType(),
+        escapeForDisplay(t.getCategory()));
+  }
+
+  private static String escapeForDisplay(String value) {
+    if (value == null) {
+      return "";
+    }
+
+    return value.replace(";", " ")
+        .replace("\t", " ")
+        .replace("\n", " ")
+        .replace("\r", " ");
   }
 }

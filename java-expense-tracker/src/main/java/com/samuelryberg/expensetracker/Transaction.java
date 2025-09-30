@@ -24,4 +24,18 @@ abstract class Transaction {
   public String getNote() {
     return note;
   }
+
+  public abstract String getType();
+
+  public String getCategory() {
+    return "";
+  }
+
+  public boolean isExpense() {
+    return "expense".equals(getType());
+  }
+
+  public boolean isIncome() {
+    return "income".equals(getType());
+  }
 }
